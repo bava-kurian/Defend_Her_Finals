@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DefendHer - Home</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(to bottom, #fcb69f, #a18cd1);
+        font-family: "Arial", sans-serif;
+        color: #fff;
+        min-height: 100vh;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      .header {
+        width: 100%;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 0 0 25px 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        position: absolute;
+        top: 0;
+      }
+      .menu-icon {
+        font-size: 24px;
+        cursor: pointer;
+      }
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .profile img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 2px solid #b297bc;
+      }
+      .profile-text {
+        font-size: 14px;
+      }
+      .profile-text h2 {
+        margin: 0;
+        font-size: 16px;
+      }
+      .profile-text p {
+        margin: 0;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .button-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+      .button-container button {
+        background: #d4a8ff;
+        color: #7d1c9e;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+      }
+      .button-container button:hover {
+        background: #c493ff;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      }
+      .sos-button {
+        margin-top: 30px;
+        background: #ff4d4d;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        padding: 20px 30px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+      }
+      .sos-button:hover {
+        background: #ff3333;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <span class="menu-icon">☰</span>
+      <div class="profile">
+        <div class="profile-text">
+          <h2>Andria Jacob Toms</h2>
+          <p>Kochi, Kerala</p>
+        </div>
+        <img src="profile.png" alt="Profile Picture" />
+      </div>
+    </div>
+    <div class="button-container">
+      <!-- Emergency Contacts Button -->
+      <a href="emergency_contact.html" style="text-decoration: none">
+        <button>Emergency Contacts</button>
+      </a>
+      <!-- Hotspots Button -->
+      <a href="hotspot.html" style="text-decoration: none">
+        <button>Hotspots</button>
+      </a>
+    </div>
+    <!-- SOS Button -->
+    <button onclick="triggerSOS()" class="sos-button">Trigger SOS</button>
+    <script>
+      function triggerSOS() {
+        fetch("/trigger_user_sos", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: 123, // Replace with actual user ID
+            location: "Lat: 9°01'30.6\"N, Lng: 72°51'01.1\"E", // Optionally pass location data
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => alert(data.message))
+          .catch((error) => console.error("Error:", error));
+      }
+    </script>
+  </body>
+</html>

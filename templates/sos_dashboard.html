@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SOS Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="text-center">SOS Alerts Dashboard</h1>
+      <div class="row mt-4">
+        <!-- Pie Chart for SOS Alert Distribution -->
+        <div class="col-md-6">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">SOS Alert Distribution</h5>
+              <canvas id="sosPieChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table for SOS Alerts -->
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Recent SOS Alerts</h5>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Details</th>
+                    <th>Location</th>
+                  </tr>
+                </thead>
+                <tbody id="alerts-body">
+                  {% for alert in alerts %}
+                  <tr>
+                    <td>{{ alert[1] }}</td>
+                    <!-- Timestamp -->
+                    <td>{{ alert[2] }}</td>
+                    <!-- Details -->
+                    <td>{{ alert[3] if alert[3] else 'Not available' }}</td>
+                    <!-- Location -->
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map iframe below the pie chart and table -->
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Hotspots</h5>
+              <iframe
+                src="https://professional-audy-rosegarden-5a32e239.koyeb.app/"
+                width="100%"
+                height="400"
+                style="border: 0"
+                allowfullscreen=""
+                loading="lazy"
+              >
+              </iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Pie chart for SOS alert distribution
+      var ctx = document.getElementById('sosPieChart').getContext('2d');
+      var sosPieChart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+              labels: ['Gesture-Based SOS', 'Lone Women SOS', 'Armed SOS', 'Other'],
+              datasets: [{
+                  label: 'Alert Distribution',
+                  data: [{{ gesture_sos }}, {{ lone_women_sos }}, {{ armed_sos }}, {{ other }}],
+                  backgroundColor: ['#FF5733', '#FFB533', '#33FF57', '#AAAAAA'],
+                  borderColor: ['#FF5733', '#FFB533', '#33FF57', '#AAAAAA'],
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  legend: {
+                      position: 'top',
+                  },
+                  tooltip: {
+                      callbacks: {
+                          label: function(tooltipItem) {
+                              return tooltipItem.raw + ' alerts';
+                          }
+                      }
+                  }
+              }
+          }
+      });
+
+      // Function to show a browser notification
+      function showNotification(message) {
+        if (Notification.permission === 'granted') {
+          new Notification(message);
+        } else if (Notification.permission !== 'denied') {
+          Notification.requestPermission().then(function(permission) {
+            if (permission === 'granted') {
+              new Notification(message);
+            }
+          });
+        }
+      }
+
+      // Monitor the table for changes (new rows added)
+      const alertsBody = document.getElementById('alerts-body');
+      const observer = new MutationObserver((mutationsList, observer) => {
+        mutationsList.forEach(mutation => {
+          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            // If a new row is added, trigger a notification
+            showNotification('New SOS Alert Added!');
+          }
+        });
+      });
+
+      // Configuration of the observer to watch for added nodes (new rows)
+      observer.observe(alertsBody, { childList: true });
+
+      // Example of adding a new alert dynamically (for demonstration purposes)
+      // You should replace this with actual dynamic data fetching logic
+      setTimeout(() => {
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+          <td>2024-12-12 10:00:00</td>
+          <td>New SOS Alert: Lone Woman in Distress</td>
+          <td>Location Data</td>
+        `;
+        alertsBody.appendChild(newRow);
+      }, 3000); // Simulate new SOS alert after 5 seconds
+    </script>
+  </body>
+</html>
